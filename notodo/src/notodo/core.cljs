@@ -6,7 +6,6 @@
 
 (enable-console-print!)
 
-
 (s/def ::todo
   (s/keys :req [::id ::created-at]
           :opt [::content ::editing]))
