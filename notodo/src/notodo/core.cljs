@@ -15,7 +15,6 @@
 
 (rf/reg-event-fx :add-todo
   (fn [{:keys [db]} [_ content opts]]
-    (println content opts)
     (let [id (:next-id db)
           editing? (:editing? opts)
           todo {:id id
