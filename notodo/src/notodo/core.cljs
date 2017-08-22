@@ -6,6 +6,18 @@
 
 (enable-console-print!)
 
+
+(s/def ::todo
+  (s/keys :req [::id ::created-at]
+          :opt [::content ::editing]))
+
+(s/def ::todos
+  (s/map-of int? ::todo))
+
+(s/def ::db
+  (s/keys :req [::next-id]
+          :opt [::todos]))
+
 (rf/reg-event-db ::initialise-db
   (fn [_ _]
     {::todos (sorted-map-by >)
