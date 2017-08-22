@@ -63,14 +63,17 @@
   [:div {:key id
          :class "todo-item"}
    (if editing?
-     [:input {:value content
+     [:input {:class "todo-item-content"
+              :value content
               :on-change #(let [val (-> % .-target .-value)]
                             (rf/dispatch [::set-property id :content val]))}]
-     [:div {:on-click (fn [_]
+     [:div {:class "todo-item-content"
+            :on-click (fn [_]
                         (rf/dispatch [::set-property-all :editing? false])
                         (rf/dispatch [::set-property id :editing? true]))}
       content])
-   [todo-delete-button id]])
+   [:div {:class "todo-item-sidebar"}
+    [todo-delete-button id]]])
 
 (defn todo-list []
   (let [todos (rf/subscribe [::get-todos])]
