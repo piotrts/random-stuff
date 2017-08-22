@@ -40,10 +40,12 @@
 
 (rf/reg-event-fx :set-property-all
   (fn [{:keys [db]} [_ key val]]
-    {:db (assoc db :todos (into {}
-                            (mapv (fn [[idx m]]
-                                    [idx (assoc m key val)])
-                                  (:todos db))))}))
+    (let [old-todos (:todos db)
+          new-todos (into (empty old-todos)
+                          (mapv (fn [[idx m]]
+                                  [idx (assoc m key val)])
+                                old-todos))]
+      {:db (assoc db :todos new-todos)})))
 
 (rf/reg-event-fx :delete-todo
   (fn [{:keys [db]} [_ id]]
