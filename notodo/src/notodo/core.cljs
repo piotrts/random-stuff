@@ -17,7 +17,12 @@
   (s/keys :req [::next-id]
           :opt [::todos]))
 
-(rf/reg-event-db ::initialise-db
+(def check-specs
+  (rf/after (fn [db]
+              (when-not (s/valid? ::db db)
+                (throw (ex-info (s/explain-str ::db db) {}))))))
+
+(rf/reg-event-db ::initialise-db [check-specs]
   (fn [_ _]
     {::todos (sorted-map-by >)
      ::next-id 0}))
@@ -30,7 +35,7 @@
   (fn [db id]
     (-> db ::todos id)))
 
-(rf/reg-event-db ::add-todo
+(rf/reg-event-db ::add-todo [check-specs]
   (fn [db [_ content opts]]
     (let [id (::next-id db)
           editing? (::editing? opts)
@@ -46,11 +51,11 @@
   (fn [db [id key]]
     (get-in db [::todos id key])))
 
-(rf/reg-event-db ::set-property
+(rf/reg-event-db ::set-property [check-specs]
   (fn [db [_ id key val]]
     (assoc-in db [::todos id key] val)))
 
-(rf/reg-event-db ::set-property-all
+(rf/reg-event-db ::set-property-all [check-specs]
   (fn [db [_ key val]]
     (let [old-todos (::todos db)
           new-todos (into (empty old-todos)
@@ -59,7 +64,7 @@
                                 old-todos))]
       (assoc db ::todos new-todos))))
 
-(rf/reg-event-db ::delete-todo
+(rf/reg-event-db ::delete-todo [check-specs]
   (fn [db [_ id]]
     (update db ::todos dissoc id)))
 
