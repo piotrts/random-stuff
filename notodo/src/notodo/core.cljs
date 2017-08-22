@@ -1,10 +1,10 @@
 (ns notodo.core
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
+            [cljs.spec.alpha :as s]
             [goog.dom :as gdom]))
 
 (enable-console-print!)
-
 
 (rf/reg-event-db ::initialise-db
   (fn [_ _]
