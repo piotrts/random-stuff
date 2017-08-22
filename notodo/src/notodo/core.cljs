@@ -7,7 +7,7 @@
 
 (rf/reg-event-db :initialise-db
   (fn [_ _]
-    {:todos (sorted-map-by <)
+    {:todos (sorted-map-by >)
      :next-id 0}))
 
 (rf/reg-sub :get-todos
@@ -40,14 +40,13 @@
 
 (rf/reg-event-fx :set-property-all
   (fn [{:keys [db]} [_ key val]]
-    (prn ">>>" key val)
     {:db (assoc db :todos (into {}
                             (mapv (fn [[idx m]]
                                     [idx (assoc m key val)])
                                   (:todos db))))}))
 
 (rf/reg-event-fx :delete-todo
-  (fn [{:keys [db]} id]
+  (fn [{:keys [db]} [_ id]]
     {:db (update db :todos dissoc id)}))
 
 (defn todo-add-button []
@@ -63,9 +62,6 @@
          :class "todo-item"}
    (if editing?
      [:input {:value content
-              :on-click (fn [evt]
-                          (.preventDefault evt)
-                          (.stopPropagation evt))
               :on-change #(let [val (-> % .-target .-value)]
                             (rf/dispatch [:set-property id :content val]))}]
      [:div {:on-click #(rf/dispatch [:set-property id :editing? true])}
@@ -87,7 +83,6 @@
   (.addEventListener js/document
                      "click"
                      (fn [evt]
-                       (prn "click")
                        (when-not (gdom/getAncestorByClass (.-target evt) "todo-item" 3)
                          (rf/dispatch [:set-property-all :editing? false])))))
 
