@@ -14,11 +14,14 @@
     (vals (:todos db))))
 
 (rf/reg-event-fx :add-todo
-  (fn [{:keys [db]} content]
+  (fn [{:keys [db]} [_ content opts]]
+    (println content opts)
     (let [id (:next-id db)
+          editing? (:editing? opts)
           todo {:id id
                 :created-at (js/Date.)
-                :content content}]
+                :content content
+                :editing? editing?}]
       {:db (-> db
              (update :todos assoc id todo)
              (update :next-id inc))})))
