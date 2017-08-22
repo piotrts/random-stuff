@@ -18,38 +18,38 @@
   (fn [db id]
     (-> db :todos id)))
 
-(rf/reg-event-fx ::add-todo
-  (fn [{:keys [db]} [_ content opts]]
+(rf/reg-event-db ::add-todo
+  (fn [db [_ content opts]]
     (let [id (:next-id db)
           editing? (:editing? opts)
           todo {:id id
                 :created-at (js/Date.)
                 :content content
                 :editing? editing?}]
-      {:db (-> db
-             (update :todos assoc id todo)
-             (update :next-id inc))})))
+      (-> db
+        (update :todos assoc id todo)
+        (update :next-id inc)))))
 
 (rf/reg-sub ::get-property
   (fn [db [id key]]
     (get-in db [:todos id key])))
 
-(rf/reg-event-fx ::set-property
-  (fn [{:keys [db]} [_ id key val]]
-    {:db (assoc-in db [:todos id key] val)}))
+(rf/reg-event-db ::set-property
+  (fn [db [_ id key val]]
+    (assoc-in db [:todos id key] val)))
 
-(rf/reg-event-fx ::set-property-all
-  (fn [{:keys [db]} [_ key val]]
+(rf/reg-event-db ::set-property-all
+  (fn [db [_ key val]]
     (let [old-todos (:todos db)
           new-todos (into (empty old-todos)
                           (mapv (fn [[idx m]]
                                   [idx (assoc m key val)])
                                 old-todos))]
-      {:db (assoc db :todos new-todos)})))
+      (assoc db :todos new-todos))))
 
-(rf/reg-event-fx ::delete-todo
-  (fn [{:keys [db]} [_ id]]
-    {:db (update db :todos dissoc id)}))
+(rf/reg-event-db ::delete-todo
+  (fn [db [_ id]]
+    (update db :todos dissoc id)))
 
 (defn todo-add-button []
   [:button {:on-click #(rf/dispatch [::add-todo "val"])}
