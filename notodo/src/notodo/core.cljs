@@ -22,7 +22,9 @@
               (when-not (s/valid? ::db db)
                 (throw (ex-info (s/explain-str ::db db) {}))))))
 
-(rf/reg-event-db ::initialise-db [check-specs]
+(def interceptors [check-specs])
+
+(rf/reg-event-db ::initialise-db interceptors
   (fn [_ _]
     {::todos (sorted-map-by >)
      ::next-id 0}))
@@ -35,7 +37,7 @@
   (fn [db id]
     (-> db ::todos id)))
 
-(rf/reg-event-db ::add-todo [check-specs]
+(rf/reg-event-db ::add-todo interceptors
   (fn [db [_ content opts]]
     (let [id (::next-id db)
           editing? (::editing? opts)
@@ -51,11 +53,11 @@
   (fn [db [id key]]
     (get-in db [::todos id key])))
 
-(rf/reg-event-db ::set-property [check-specs]
+(rf/reg-event-db ::set-property interceptors
   (fn [db [_ id key val]]
     (assoc-in db [::todos id key] val)))
 
-(rf/reg-event-db ::set-property-all [check-specs]
+(rf/reg-event-db ::set-property-all interceptors
   (fn [db [_ key val]]
     (let [old-todos (::todos db)
           new-todos (into (empty old-todos)
@@ -64,7 +66,7 @@
                                 old-todos))]
       (assoc db ::todos new-todos))))
 
-(rf/reg-event-db ::delete-todo [check-specs]
+(rf/reg-event-db ::delete-todo interceptors
   (fn [db [_ id]]
     (update db ::todos dissoc id)))
 
