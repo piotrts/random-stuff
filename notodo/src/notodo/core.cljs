@@ -64,7 +64,9 @@
      [:input {:value content
               :on-change #(let [val (-> % .-target .-value)]
                             (rf/dispatch [:set-property id :content val]))}]
-     [:div {:on-click #(rf/dispatch [:set-property id :editing? true])}
+     [:div {:on-click (fn [_]
+                        (rf/dispatch [:set-property-all :editing? false])
+                        (rf/dispatch [:set-property id :editing? true]))}
       content])
    [todo-delete-button id]])
 
