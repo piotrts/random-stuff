@@ -1,6 +1,7 @@
 (ns notodo.core
-    (:require [reagent.core :as r]
-              [re-frame.core :as rf]))
+  (:require [reagent.core :as r]
+            [re-frame.core :as rf]
+            [goog.dom :as gdom]))
 
 (enable-console-print!)
 
@@ -9,9 +10,13 @@
     {:todos (sorted-map-by <)
      :next-id 0}))
 
-(rf/reg-sub :query-todos
+(rf/reg-sub :get-todos
   (fn [db _]
     (vals (:todos db))))
+
+(rf/reg-sub :get-todo
+  (fn [db id]
+    (-> db :todos id)))
 
 (rf/reg-event-fx :add-todo
   (fn [{:keys [db]} [_ content opts]]
@@ -25,6 +30,22 @@
              (update :todos assoc id todo)
              (update :next-id inc))})))
 
+(rf/reg-sub :get-property
+  (fn [db [id key]]
+    (get-in db [:todos id key])))
+
+(rf/reg-event-fx :set-property
+  (fn [{:keys [db]} [_ id key val]]
+    {:db (assoc-in db [:todos id key] val)}))
+
+(rf/reg-event-fx :set-property-all
+  (fn [{:keys [db]} [_ key val]]
+    (prn ">>>" key val)
+    {:db (assoc db :todos (into {}
+                            (mapv (fn [[idx m]]
+                                    [idx (assoc m key val)])
+                                  (:todos db))))}))
+
 (rf/reg-event-fx :delete-todo
   (fn [{:keys [db]} id]
     {:db (update db :todos dissoc id)}))
@@ -37,13 +58,22 @@
   [:button {:on-click #(rf/dispatch [:delete-todo id])}
    "Delete"])
 
-(defn todo-item [{:keys [id content] :as todo}]
-  [:div {:key id}
-   content
+(defn todo-item [{:keys [id content editing?]}]
+  [:div {:key id
+         :class "todo-item"}
+   (if editing?
+     [:input {:value content
+              :on-click (fn [evt]
+                          (.preventDefault evt)
+                          (.stopPropagation evt))
+              :on-change #(let [val (-> % .-target .-value)]
+                            (rf/dispatch [:set-property id :content val]))}]
+     [:div {:on-click #(rf/dispatch [:set-property id :editing? true])}
+      content])
    [todo-delete-button id]])
 
 (defn todo-list []
-  (let [todos (rf/subscribe [:query-todos])]
+  (let [todos (rf/subscribe [:get-todos])]
     [:div (map todo-item @todos)]))
 
 (defn ui []
@@ -52,5 +82,14 @@
    [todo-list]])
 
 (rf/dispatch [:initialise-db])
+
+(defonce on-click-event-listener
+  (.addEventListener js/document
+                     "click"
+                     (fn [evt]
+                       (prn "click")
+                       (when-not (gdom/getAncestorByClass (.-target evt) "todo-item" 3)
+                         (rf/dispatch [:set-property-all :editing? false])))))
+
 (r/render [ui] (. js/document (getElementById "app")))
 
