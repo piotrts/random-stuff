@@ -8,7 +8,8 @@
 (def placeholder "(empty)")
 
 (defn todo-add-button []
-  [:button {:on-click #(rf/dispatch [::events/add-todo "val"])}
+  [:a {:on-click #(rf/dispatch [::events/add-todo "val"])
+         :href "#"}
    "Add"])
 
 (defn todo-delete-button [id]
@@ -45,7 +46,8 @@
 
 (defn ui []
   [:div
-   [todo-add-button]
+   [:div.todo-panel
+    [todo-add-button]]
    [todo-list]])
 
 (defonce on-click-event-listener

@@ -12,6 +12,12 @@ body {
   color: #fff1d0;
 }
 
+.todo-panel {
+  margin: 6px;
+  padding: 6px;
+  width: 416px;
+}
+
 .todo-item-content-not-edited {
   margin: 4px;
   padding: 4px;
