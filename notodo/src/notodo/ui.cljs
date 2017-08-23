@@ -31,7 +31,7 @@
 
 (defn todo-list []
   (let [todos (rf/subscribe [::events/get-todos])]
-    (into [:div] (map todo-item @todos))))
+    (into [:div] (mapv todo-item @todos))))
 
 (defn ui []
   [:div
