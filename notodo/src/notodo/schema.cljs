@@ -22,7 +22,10 @@
           :opt [::db/todos]))
 
 (def check-specs
-  (rf/after (fn [db]
-              (when-not (s/valid? ::db/db db)
-                (throw (ex-info (s/explain-str ::db/db db) {}))))))
+  (fn [spec]
+    (rf/after (fn [db]
+                (when-not (s/valid? spec db)
+                  (let [message (s/explain-str spec db)
+                        data (s/explain-data spec db)]
+                    (throw (ex-info message data))))))))
 

@@ -3,7 +3,7 @@
             [notodo.schema :as schema]
             [re-frame.core :as rf]))
 
-(def interceptors [schema/check-specs])
+(def interceptors [(schema/check-specs ::db/db)])
 
 (rf/reg-event-db ::initialise-db interceptors
   (fn [_ _]

@@ -1,5 +1,4 @@
-(ns notodo.db
-  (:require [cljs.spec.alpha :as s]))
+(ns notodo.db)
 
 (def default-db
   #::{:todos (sorted-map-by <)
