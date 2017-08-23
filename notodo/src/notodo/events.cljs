@@ -13,10 +13,6 @@
   (fn [db _]
     (vals (::db/todos db))))
 
-(rf/reg-sub ::get-todo
-  (fn [db [_ id]]
-    (-> db ::db/todos id)))
-
 (rf/reg-event-db ::add-todo interceptors
   (fn [db [_ content]]
     (let [id (::db/next-id db)
