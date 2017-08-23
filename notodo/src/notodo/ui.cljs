@@ -15,7 +15,7 @@
 
 (defn todo-item [{:keys [::db/id ::db/content ::db/editing?]}]
   (let [edited? (rf/subscribe [::events/edited? id])]
-    [:div {:key id
+    [:div {:key (str "todo-" id)
            :class "todo-item"}
      (if @edited?
        [:input {:class "todo-item-content"
