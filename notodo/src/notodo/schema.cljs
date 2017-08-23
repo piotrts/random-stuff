@@ -3,10 +3,13 @@
             [re-frame.core :as rf]
             [cljs.spec.alpha :as s]))
 
+(defn persistent-tree-map? [x]
+  (instance? PersistentTreeMap x))
+
 (s/def ::db/id (s/and int? #(>= % 0)))
 
 (s/def ::db/next-id ::db/id)
-(s/def ::db/edit ::db/id)
+(s/def ::db/edit (s/nilable ::db/id))
 
 (s/def ::db/created-at inst?)
 (s/def ::db/content (s/nilable string?))
@@ -16,7 +19,8 @@
           :opt [::db/content]))
 
 (s/def ::db/todos
-  (s/map-of ::db/id ::db/todo))
+  (s/and (s/map-of ::db/id ::db/todo)
+         persistent-tree-map?))
 
 (s/def ::db/db
   (s/keys :req [::db/next-id]
