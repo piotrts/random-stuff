@@ -13,10 +13,11 @@
 
 (s/def ::db/created-at inst?)
 (s/def ::db/content (s/nilable string?))
+(s/def ::db/done? (s/nilable boolean?))
 
 (s/def ::db/todo
   (s/keys :req [::db/id ::db/created-at]
-          :opt [::db/content]))
+          :opt [::db/content ::db/done?]))
 
 (s/def ::db/todos
   (s/and (s/map-of ::db/id ::db/todo)
