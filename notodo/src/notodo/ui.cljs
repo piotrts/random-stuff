@@ -7,6 +7,11 @@
 
 (def placeholder "(empty)")
 
+(def utf8-symbol-unchecked \u2610)
+(def utf8-symbol-checked \u2611)
+(def utf8-symbol-add \uff0b)
+(def utf8-symbol-close \u2716)
+
 (defn todo-add-button []
   [:a {:on-click #(rf/dispatch [::events/add-todo ""])
        :href "#"}
@@ -15,7 +20,7 @@
 (defn todo-delete-button [id]
   [:div {:class "todo-item-delete-button"
          :on-click #(rf/dispatch [::events/delete-todo id])}
-   \u2716])
+   utf8-symbol-close])
 
 (defn todo-item-edited [{:keys [::db/id ::db/content]}]
   [:input {:class "todo-item-content-edited"
