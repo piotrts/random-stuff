@@ -30,7 +30,7 @@
                      (rf/dispatch [::events/set-edited id]))}
    (or (seq content) placeholder)])
 
-(defn todo-item [{:keys [::db/id ::db/editing?] :as todo}]
+(defn todo-item [{:keys [::db/id] :as todo}]
   (let [edited? (rf/subscribe [::events/edited? id])]
     [:div {:key (str "todo-" id)
            :class "todo-item"}
