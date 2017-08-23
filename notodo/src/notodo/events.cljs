@@ -16,9 +16,10 @@
 
 (rf/reg-cofx ::localstorage-data
   (fn [cofx _]
-    (let [data (into db/EMPTY-TODOS (-> js/localStorage 
-                                        (.getItem "notodo")
-                                        cljs.reader/read-string))]
+    (let [data (-> js/localStorage
+                   (.getItem "notodo")
+                   cljs.reader/read-string
+                   (update ::db/todos (partial into db/EMPTY-TODOS)))]
       (assoc cofx ::localstorage-data data))))
 
 (def check-specs-interceptor (schema/check-specs-interceptor ::db/db))
@@ -30,7 +31,7 @@
                                   check-specs-interceptor]
   (fn [cofx _]
     (let [data (::localstorage-data cofx)]
-      (if (seq data)
+      (if (seq (::db/todos data))
         {:db data}
         {:dispatch [::add-todo ""]
          :db db/default-db}))))
