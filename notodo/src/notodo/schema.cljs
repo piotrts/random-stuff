@@ -24,7 +24,7 @@
   (s/keys :req [::db/next-id]
           :opt [::db/todos ::db/edited]))
 
-(def check-specs
+(def check-specs-interceptor
   (fn [spec]
     (rf/after (fn [db]
                 (when-not (s/valid? spec db)

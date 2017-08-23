@@ -3,20 +3,37 @@
             [notodo.schema :as schema]
             [re-frame.core :as rf]))
 
-(def save-in-localstorage
+(defn save-in-localstorage [db]
+  (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edited))))
+
+(def save-in-localstorage-interceptor
   (rf/->interceptor
     :id :save-in-localstorage
     :before (fn [context]
               (let [db (-> context :coeffects :db)]
-                (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edited)))
+                (save-in-localstorage db) 
                 context))))
 
-(def interceptors [(schema/check-specs ::db/db) save-in-localstorage])
-
-(rf/reg-event-fx ::initialise-db interceptors
+(rf/reg-cofx ::localstorage-data
   (fn [cofx _]
-    {:dispatch [::add-todo ""]
-     :db db/default-db}))
+    (let [data (into db/EMPTY-TODOS (-> js/localStorage 
+                                        (.getItem "notodo")
+                                        cljs.reader/read-string))]
+      (assoc cofx ::localstorage-data data))))
+
+(def check-specs-interceptor (schema/check-specs-interceptor ::db/db))
+
+(def interceptors [check-specs-interceptor
+                   save-in-localstorage-interceptor])
+
+(rf/reg-event-fx ::initialise-db [(rf/inject-cofx ::localstorage-data)
+                                  check-specs-interceptor]
+  (fn [cofx _]
+    (let [data (::localstorage-data cofx)]
+      (if (seq data)
+        {:db data}
+        {:dispatch [::add-todo ""]
+         :db db/default-db}))))
 
 (rf/reg-sub ::get-todos
   (fn [db _]
