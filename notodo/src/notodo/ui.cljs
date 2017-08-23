@@ -5,6 +5,8 @@
             [re-frame.core :as rf]
             [goog.dom :as gdom]))
 
+(def placeholder "(empty)")
+
 (defn todo-add-button []
   [:button {:on-click #(rf/dispatch [::events/add-todo "val"])}
    "Add"])
@@ -20,12 +22,13 @@
      (if @edited?
        [:input {:class "todo-item-content"
                 :value content
+                :placeholder placeholder
                 :on-change #(let [val (-> % .-target .-value)]
-                              (rf/dispatch [::events/set-property id ::db/content val]))}]
+                              (rf/dispatch [::events/set-property id ::db/content val])) }]
        [:div {:class "todo-item-content"
               :on-click (fn [_]
                           (rf/dispatch [::events/set-edited id]))}
-        content])
+        (or (seq content) placeholder)])
      [:div {:class "todo-item-sidebar"}
       [todo-delete-button id]]]))
 
