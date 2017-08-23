@@ -13,7 +13,7 @@
 
 (defn todo-delete-button [id]
   [:button {:on-click #(rf/dispatch [::events/delete-todo id])}
-   "Delete"])
+   \u2716])
 
 (defn todo-item-edited [{:keys [::db/id ::db/content]}]
   [:input {:class "todo-item-content"
