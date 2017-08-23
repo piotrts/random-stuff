@@ -27,14 +27,14 @@
 (defn todo-item-not-edited [{:keys [::db/id ::db/content]}]
   [:div {:class "todo-item-content-not-edited"
          :on-click (fn [_]
-                     (rf/dispatch [::events/set-edited id]))}
+                     (rf/dispatch [::events/set-edit id]))}
    (or (seq content) placeholder)])
 
 (defn todo-item [{:keys [::db/id] :as todo}]
-  (let [edited? (rf/subscribe [::events/edited? id])]
+  (let [editing? (rf/subscribe [::events/edit? id])]
     [:div {:key (str "todo-" id)
            :class "todo-item"}
-     (if @edited?
+     (if @editing?
        [todo-item-edited todo]
        [todo-item-not-edited todo])
      [:div {:class "todo-item-sidebar"}
@@ -55,4 +55,4 @@
                      "click"
                      (fn [evt]
                        (when-not (gdom/getAncestorByClass (.-target evt) "todo-item" 3)
-                         (rf/dispatch [::events/set-edited nil])))))
+                         (rf/dispatch [::events/set-edit nil])))))

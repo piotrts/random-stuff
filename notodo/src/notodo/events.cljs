@@ -4,7 +4,7 @@
             [re-frame.core :as rf]))
 
 (defn save-in-localstorage [db]
-  (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edited))))
+  (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edit))))
 
 (def save-in-localstorage-interceptor
   (rf/->interceptor
@@ -67,13 +67,13 @@
                                 old-todos))]
       (assoc db ::db/todos new-todos))))
 
-(rf/reg-sub ::edited?
+(rf/reg-sub ::edit?
   (fn [db [_ id]]
-    (= id (::db/edited db))))
+    (= id (::db/edit db))))
 
-(rf/reg-event-db ::set-edited interceptors
+(rf/reg-event-db ::set-edit interceptors
   (fn [db [_ id]]
-    (assoc db ::db/edited id)))
+    (assoc db ::db/edit id)))
 
 (rf/reg-event-db ::delete-todo interceptors
   (fn [db [_ id]]

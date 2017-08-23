@@ -7,7 +7,7 @@
   (>= x 0))
 
 (s/def ::db/next-id (s/and int? >=0?))
-(s/def ::db/edited (s/nilable >=0?))
+(s/def ::db/edit (s/nilable >=0?))
 
 (s/def ::db/id (s/and int? >=0?))
 (s/def ::db/created-at inst?)
@@ -22,7 +22,7 @@
 
 (s/def ::db/db
   (s/keys :req [::db/next-id]
-          :opt [::db/todos ::db/edited]))
+          :opt [::db/todos ::db/edit]))
 
 (def check-specs-interceptor
   (fn [spec]
