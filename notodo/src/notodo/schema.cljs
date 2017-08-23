@@ -3,13 +3,11 @@
             [re-frame.core :as rf]
             [cljs.spec.alpha :as s]))
 
-(defn >=0? [x]
-  (>= x 0))
+(s/def ::db/id (s/and int? #(>= % 0)))
 
-(s/def ::db/next-id (s/and int? >=0?))
-(s/def ::db/edit (s/nilable >=0?))
+(s/def ::db/next-id ::db/id)
+(s/def ::db/edit ::db/id)
 
-(s/def ::db/id (s/and int? >=0?))
 (s/def ::db/created-at inst?)
 (s/def ::db/content (s/nilable string?))
 
