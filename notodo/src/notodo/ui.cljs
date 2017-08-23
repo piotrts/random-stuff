@@ -30,6 +30,9 @@
                      (rf/dispatch [::events/set-edit id]))}
    (or (seq content) placeholder)])
 
+(defn todo-done-toggle [{:keys [::db/done?]}]
+  [:div (str (boolean done?))])
+
 (defn todo-item [{:keys [::db/id] :as todo}]
   (let [editing? (rf/subscribe [::events/edit? id])]
     [:div {:key (str "todo-" id)
@@ -38,6 +41,7 @@
        [todo-item-edited todo]
        [todo-item-not-edited todo])
      [:div {:class "todo-item-sidebar"}
+      [todo-done-toggle todo]
       [todo-delete-button id]]]))
 
 (defn todo-list []
