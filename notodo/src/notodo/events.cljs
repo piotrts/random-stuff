@@ -3,7 +3,15 @@
             [notodo.schema :as schema]
             [re-frame.core :as rf]))
 
-(def interceptors [(schema/check-specs ::db/db)])
+(def save-in-localstorage
+  (rf/->interceptor
+    :id :save-in-localstorage
+    :before (fn [context]
+              (let [db (-> context :coeffects :db)]
+                (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edited)))
+                context))))
+
+(def interceptors [(schema/check-specs ::db/db) save-in-localstorage])
 
 (rf/reg-event-fx ::initialise-db interceptors
   (fn [cofx _]
