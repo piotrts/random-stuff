@@ -12,18 +12,19 @@
    "Add"])
 
 (defn todo-delete-button [id]
-  [:button {:on-click #(rf/dispatch [::events/delete-todo id])}
+  [:div {:class "todo-item-delete-button"
+         :on-click #(rf/dispatch [::events/delete-todo id])}
    \u2716])
 
 (defn todo-item-edited [{:keys [::db/id ::db/content]}]
-  [:input {:class "todo-item-content"
+  [:input {:class "todo-item-content-edited"
            :value content
            :placeholder placeholder
            :on-change #(let [val (-> % .-target .-value)]
                          (rf/dispatch [::events/set-property id ::db/content val]))}])
 
 (defn todo-item-not-edited [{:keys [::db/id ::db/content]}]
-  [:div {:class "todo-item-content"
+  [:div {:class "todo-item-content-not-edited"
          :on-click (fn [_]
                      (rf/dispatch [::events/set-edited id]))}
    (or (seq content) placeholder)])
