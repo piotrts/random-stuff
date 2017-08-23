@@ -5,9 +5,10 @@
 
 (def interceptors [(schema/check-specs ::db/db)])
 
-(rf/reg-event-db ::initialise-db interceptors
-  (fn [_ _]
-    db/default-db))
+(rf/reg-event-fx ::initialise-db interceptors
+  (fn [cofx _]
+    {:dispatch [::add-todo ""]
+     :db db/default-db}))
 
 (rf/reg-sub ::get-todos
   (fn [db _]
