@@ -14,17 +14,15 @@
     (vals (::db/todos db))))
 
 (rf/reg-sub ::get-todo
-  (fn [db id]
+  (fn [db [_ id]]
     (-> db ::db/todos id)))
 
 (rf/reg-event-db ::add-todo interceptors
-  (fn [db [_ content opts]]
+  (fn [db [_ content]]
     (let [id (::db/next-id db)
-          editing? (::db/editing? opts)
           todo #::db{:id id
                      :created-at (js/Date.)
-                     :content content
-                     :editing? editing?}]
+                     :content content}]
       (-> db
         (update ::db/todos assoc id todo)
         (update ::db/next-id inc)))))
@@ -45,6 +43,14 @@
                                   [idx (assoc m key val)])
                                 old-todos))]
       (assoc db ::db/todos new-todos))))
+
+(rf/reg-sub ::edited?
+  (fn [db [_ id]]
+    (= id (::db/edited db))))
+
+(rf/reg-event-db ::set-edited interceptors
+  (fn [db [_ id]]
+    (assoc db ::db/edited id)))
 
 (rf/reg-event-db ::delete-todo interceptors
   (fn [db [_ id]]

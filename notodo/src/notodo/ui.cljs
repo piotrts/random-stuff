@@ -14,35 +14,33 @@
    "Delete"])
 
 (defn todo-item [{:keys [::db/id ::db/content ::db/editing?]}]
-  [:div {:key id
-         :class "todo-item"}
-   (if editing?
-     [:input {:class "todo-item-content"
-              :value content
-              :on-change #(let [val (-> % .-target .-value)]
-                            (rf/dispatch [::events/set-property id ::db/content val]))}]
-     [:div {:class "todo-item-content"
-            :on-click (fn [_]
-                        (rf/dispatch [::events/set-property-all ::db/editing? false])
-                        (rf/dispatch [::events/set-property id ::db/editing? true]))}
-      content])
-   [:div {:class "todo-item-sidebar"}
-    [todo-delete-button id]]])
+  (let [edited? (rf/subscribe [::events/edited? id])]
+    [:div {:key id
+           :class "todo-item"}
+     (if @edited?
+       [:input {:class "todo-item-content"
+                :value content
+                :on-change #(let [val (-> % .-target .-value)]
+                              (rf/dispatch [::events/set-property id ::db/content val]))}]
+       [:div {:class "todo-item-content"
+              :on-click (fn [_]
+                          (rf/dispatch [::events/set-edited id]))}
+        content])
+     [:div {:class "todo-item-sidebar"}
+      [todo-delete-button id]]]))
 
 (defn todo-list []
   (let [todos (rf/subscribe [::events/get-todos])]
-    [:div (map todo-item @todos)]))
+    (into [:div] (map todo-item @todos))))
 
 (defn ui []
   [:div
    [todo-add-button]
    [todo-list]])
 
-(rf/dispatch [::events/initialise-db])
-
 (defonce on-click-event-listener
   (.addEventListener js/document
                      "click"
                      (fn [evt]
                        (when-not (gdom/getAncestorByClass (.-target evt) "todo-item" 3)
-                         (rf/dispatch [::events/set-property-all ::db/editing? false])))))
+                         (rf/dispatch [::events/set-edited nil])))))
