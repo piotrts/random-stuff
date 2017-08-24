@@ -6,7 +6,7 @@
 
 (enable-console-print!)
 
-(rf/dispatch [::events/initialise-db])
+(rf/dispatch-sync [::events/initialise-db])
 
 (r/render [ui/ui] (. js/document (getElementById "app")))
 
