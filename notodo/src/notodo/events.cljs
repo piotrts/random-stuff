@@ -1,6 +1,7 @@
 (ns notodo.events
   (:require [notodo.db :as db]
             [notodo.schema :as schema]
+            [cljs.reader :as reader]
             [re-frame.core :as rf]))
 
 (defn save-in-localstorage [db]
@@ -18,7 +19,7 @@
   (fn [cofx _]
     (let [data (-> js/localStorage
                    (.getItem "notodo")
-                   cljs.reader/read-string
+                   reader/read-string
                    (update ::db/todos #(into db/EMPTY-TODOS %)))]
       (assoc cofx ::localstorage-data data))))
 

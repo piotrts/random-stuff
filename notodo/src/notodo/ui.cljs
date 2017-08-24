@@ -22,6 +22,12 @@
          :on-click #(rf/dispatch [::events/delete-todo id])}
    utf8-symbol-close])
 
+(defn todo-done-toggle [{:keys [::db/done?]}]
+  [:div {:on-click #(rf/dispatch [::events/set-property id ::db/done? (not done)])}
+   (if done?
+     utf8-symbol-checked
+     utf8-symbol-unchecked)])
+
 (defn todo-item-edited [{:keys [::db/id ::db/content]}]
   [:input {:class "todo-item-content-edited"
            :value content
@@ -35,8 +41,6 @@
                      (rf/dispatch [::events/set-edit id]))}
    (or (seq content) placeholder)])
 
-(defn todo-done-toggle [{:keys [::db/done?]}]
-  [:div (str (boolean done?))])
 
 (defn todo-item [{:keys [::db/id] :as todo}]
   (let [editing? (rf/subscribe [::events/edit? id])]
