@@ -22,8 +22,8 @@
          :on-click #(rf/dispatch [::events/delete-todo id])}
    utf8-symbol-close])
 
-(defn todo-done-toggle [{:keys [::db/done?]}]
-  [:div {:on-click #(rf/dispatch [::events/set-property id ::db/done? (not done)])}
+(defn todo-done-toggle [{:keys [::db/id ::db/done?]}]
+  [:div {:on-click #(rf/dispatch [::events/set-property id ::db/done? (not done?)])}
    (if done?
      utf8-symbol-checked
      utf8-symbol-unchecked)])
