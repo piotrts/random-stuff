@@ -9,13 +9,12 @@
 
 (def utf8-symbol-unchecked \u2610)
 (def utf8-symbol-checked \u2611)
-(def utf8-symbol-add \uff0b)
 (def utf8-symbol-close \u2716)
 
 (defn todo-add-button []
   [:a {:on-click #(rf/dispatch [::events/add-todo ""])
        :href "#"}
-   "Add"])
+   "add"])
 
 (defn todo-delete-button [id]
   [:div {:class "todo-item-delete-button"
