@@ -23,7 +23,8 @@
    utf8-symbol-close])
 
 (defn todo-done-toggle [{:keys [::db/id ::db/done?]}]
-  [:div {:on-click #(rf/dispatch [::events/set-property id ::db/done? (not done?)])}
+  [:div {:class "todo-item-done-toggle"
+         :on-click #(rf/dispatch [::events/set-property id ::db/done? (not done?)])}
    (if done?
      utf8-symbol-checked
      utf8-symbol-unchecked)])
@@ -46,11 +47,11 @@
   (let [editing? (rf/subscribe [::events/edit? id])]
     [:div {:key (str "todo-" id)
            :class "todo-item"}
+     [todo-done-toggle todo]
      (if @editing?
        [todo-item-edited todo]
        [todo-item-not-edited todo])
      [:div {:class "todo-item-sidebar"}
-      [todo-done-toggle todo]
       [todo-delete-button id]]]))
 
 (defn todo-list []
