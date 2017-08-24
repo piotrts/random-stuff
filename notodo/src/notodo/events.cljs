@@ -44,9 +44,9 @@
 (rf/reg-event-db ::add-todo interceptors
   (fn [db [_ content]]
     (let [id (::db/next-id db)
-          todo #::db{:id id
-                     :created-at (js/Date.)
-                     :content content}]
+          todo {::db/id id
+                ::db/created-at (js/Date.)
+                ::db/content content}]
       (-> db
         (update ::db/todos assoc id todo)
         (update ::db/next-id inc)))))
