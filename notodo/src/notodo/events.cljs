@@ -19,7 +19,7 @@
     (let [data (-> js/localStorage
                    (.getItem "notodo")
                    cljs.reader/read-string
-                   (update ::db/todos (partial into db/EMPTY-TODOS)))]
+                   (update ::db/todos #(into db/EMPTY-TODOS %)))]
       (assoc cofx ::localstorage-data data))))
 
 (def check-specs-interceptor (schema/check-specs-interceptor ::db/db))
