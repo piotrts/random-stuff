@@ -7,10 +7,7 @@
 (defn save-in-localstorage [db]
   (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edit))))
 
-(def save-in-localstorage-interceptor
-  (rf/after
-    (fn [db]
-      (save-in-localstorage db))))
+(def save-in-localstorage-interceptor (rf/after save-in-localstorage))
 
 (rf/reg-cofx ::localstorage-data
   (fn [cofx _]
