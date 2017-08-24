@@ -8,12 +8,9 @@
   (.setItem js/localStorage "notodo" (pr-str (dissoc db ::db/edit))))
 
 (def save-in-localstorage-interceptor
-  (rf/->interceptor
-    :id :save-in-localstorage
-    :before (fn [context]
-              (let [db (-> context :coeffects :db)]
-                (save-in-localstorage db) 
-                context))))
+  (rf/after
+    (fn [db]
+      (save-in-localstorage db))))
 
 (rf/reg-cofx ::localstorage-data
   (fn [cofx _]
