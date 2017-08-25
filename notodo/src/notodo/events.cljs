@@ -49,9 +49,9 @@
   (fn [db [id key]]
     (get-in db [::db/todos id key])))
 
-(rf/reg-event-db ::set-property interceptors
-  (fn [db [_ id key val]]
-    (assoc-in db [::db/todos id key] val)))
+(rf/reg-event-db ::set-property [interceptors (rf/path ::db/todos)]
+  (fn [todos [_ id key val]]
+    (assoc-in todos [id key] val)))
 
 (rf/reg-sub ::edit?
   (fn [db [_ id]]
