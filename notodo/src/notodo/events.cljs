@@ -53,15 +53,6 @@
   (fn [db [_ id key val]]
     (assoc-in db [::db/todos id key] val)))
 
-(rf/reg-event-db ::set-property-all interceptors
-  (fn [db [_ key val]]
-    (let [old-todos (::db/todos db)
-          new-todos (into (empty old-todos)
-                          (mapv (fn [[idx m]]
-                                  [idx (assoc m key val)])
-                                old-todos))]
-      (assoc db ::db/todos new-todos))))
-
 (rf/reg-sub ::edit?
   (fn [db [_ id]]
     (= id (::db/edit db))))
