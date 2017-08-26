@@ -1,4 +1,4 @@
-(ns notodo.test
+(ns notodo.tests
   (:require [clojure.java.io :as io])
   (:import (org.openqa.selenium.chrome ChromeDriverService ChromeDriverService$Builder)
            (org.openqa.selenium.remote DesiredCapabilities RemoteWebDriver)))
