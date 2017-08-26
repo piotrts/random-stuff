@@ -17,13 +17,11 @@
   (RemoteWebDriver. (.getUrl service)
                     (DesiredCapabilities/chrome)))
 
-(def chrome-service (atom nil))
-(def chrome-web-driver (atom nil))
-
 (defn run-web-tests []
-  (reset! chrome-service (make-and-start-chrome-service))
-  (reset! chrome-web-driver (make-chrome-web-driver @chrome-service))
-  (.get @chrome-web-driver "http://localhost:3449"))
+  (let [chrome-service (make-and-start-chrome-service)
+        chrome-web-driver (make-chrome-web-driver chrome-service)]
+    (.get chrome-web-driver "http://localhost:3449")
+    (.quit chrome-web-driver)))
 
 ;(run-web-tests)
 
