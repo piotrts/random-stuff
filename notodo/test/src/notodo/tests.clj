@@ -43,8 +43,18 @@
 
 ;; example test
 (t/deftest test-elements-after-startup
-  (t/testing "presence of at least one todo item"
-    (t/is (.findElement *chrome-web-driver* (By/className "todo-item")))))
+  (t/testing "at least one todo item should be present"
+    (t/is (.findElement *chrome-web-driver* (By/className "todo-item"))))
+  ;(t/testing "localStorage persistence"
+  ;  (let [add-button (.findElement *chrome-web-driver* (By/id "todo-add"))]
+  ;    (.click add-button)
+  ;    (t/is (.findElement)))))
+  (t/testing "add button should add new todo item"
+    (let [todos (.findElements *chrome-web-driver* (By/className "todo-item"))
+          add-button (.findElement *chrome-web-driver* (By/id "todo-add"))]
+      (.click add-button)
+      (t/is (> (count (.findElements *chrome-web-driver* (By/className "todo-item")))
+               (count todos))))))
 
 (defn run-tests []
   (t/run-tests 'notodo.tests))

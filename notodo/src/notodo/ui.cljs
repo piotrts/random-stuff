@@ -12,7 +12,8 @@
 (def utf8-symbol-close \u2716)
 
 (defn todo-add-button []
-  [:a {:on-click #(rf/dispatch [::events/add-todo ""])
+  [:a {:id "todo-add"
+       :on-click #(rf/dispatch [::events/add-todo ""])
        :href "#"}
    "add"])
 
