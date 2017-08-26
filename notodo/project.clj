@@ -7,13 +7,14 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.908"]
                  [reagent "0.8.0-alpha1"]
-                 [re-frame "0.10.1"] ]
+                 [re-frame "0.10.1"]
+                 [org.seleniumhq.selenium/selenium-java "3.5.2"]]
   :plugins [[lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
   :source-paths ["src"]
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src"]
+                :source-paths ["src" "test/src"]
                 :compiler {:main notodo.core
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/notodo.js"
