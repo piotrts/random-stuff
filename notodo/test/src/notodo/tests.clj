@@ -33,7 +33,7 @@
                          (seq (.findElements driver (By/cssSelector "#app > *")))))))
            (f)
            (catch TimeoutException e
-             (throw (ex-info "Unable to mount app. Is FigWheel running?" {}))))
+             (throw (ex-info "Unable to mount app. Is server running?" {}))))
       *chrome-web-driver*)))
 
 (defn teardown-chrome-web-driver [chrome-web-driver]
@@ -41,20 +41,33 @@
 
 (t/use-fixtures :once #(-> % setup-chrome-web-driver teardown-chrome-web-driver))
 
-;; example test
+;; core.test/testing doesn't work as expected
 (t/deftest test-elements-after-startup
-  (t/testing "at least one todo item should be present"
-    (t/is (.findElement *chrome-web-driver* (By/className "todo-item"))))
+  (t/is (.findElement *chrome-web-driver* (By/className "todo-item"))
+        "at least one todo item should be present"))
   ;(t/testing "localStorage persistence"
   ;  (let [add-button (.findElement *chrome-web-driver* (By/id "todo-add"))]
   ;    (.click add-button)
-  ;    (t/is (.findElement)))))
-  (t/testing "add button should add new todo item"
-    (let [todos (.findElements *chrome-web-driver* (By/className "todo-item"))
-          add-button (.findElement *chrome-web-driver* (By/id "todo-add"))]
-      (.click add-button)
-      (t/is (> (count (.findElements *chrome-web-driver* (By/className "todo-item")))
-               (count todos))))))
+  ;    (t/is (.findElement))))))
+
+(t/deftest test-modifying-elements
+  (let [todos (.findElements *chrome-web-driver* (By/className "todo-item"))
+        add-button (.findElement *chrome-web-driver* (By/id "todo-add"))]
+    (.click add-button)
+    (t/is (> (count (.findElements *chrome-web-driver* (By/className "todo-item")))
+             (count todos))
+          "add button should add new todo item")))
+
+(def default-report t/report)
+
+(defn report [event]
+  (when (= :pass (:type event))
+    (print "PASS")
+    (when-let [msg (:message event)]
+      (t/with-test-out (print msg)))
+    (newline))
+  (default-report event))
 
 (defn run-tests []
-  (t/run-tests 'notodo.tests))
+  (binding [t/report report]
+    (t/run-tests 'notodo.tests)))
