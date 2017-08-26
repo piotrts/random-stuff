@@ -27,8 +27,8 @@
     (.get chrome-web-driver "http://localhost:3449")
     (. (WebDriverWait. chrome-web-driver 10)
        (until (reify ExpectedCondition
-                (apply [_ d]
-                  (.findElement d (By/id "app"))))))
+                (apply [_ driver]
+                  (seq (.findElements driver (By/cssSelector "#app > *")))))))
     (.quit chrome-web-driver)))
 
 ;(run-web-tests)
