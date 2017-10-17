@@ -91,13 +91,11 @@
 
 (def price-publisher-thread
   (Thread. (fn []
-             (time
-               (loop [[price & rest] (price-generator 1000 0.01)]
-                 (with-conn
-                   (car/publish "price-update" price))
-                 (Thread/sleep 1000)
-                 (recur rest)))
-             (println "done"))))
+             (loop [[price & rest] (price-generator 1000 0.01)]
+               (with-conn
+                 (car/publish "price-update" price))
+               (Thread/sleep 1000)
+               (recur rest)))))
 
 (.start price-publisher-thread)
 
